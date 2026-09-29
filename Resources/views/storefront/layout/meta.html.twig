@@ -1,0 +1,187 @@
+{% sw_extends '@Storefront/storefront/layout/meta.html.twig' %}
+
+{#
+    Dmx4allMetaTool
+    Alle Werte werden hier vor dem Rendern des Parent-Templates berechnet. Die Blöcke unten geben
+    entweder den berechneten Wert oder – wenn nichts konfiguriert ist – parent() aus, damit
+    Shopware-Standard und andere Plugins unverändert weiterarbeiten.
+#}
+
+{% set dmxActive = config('Dmx4allMetaTool.config.active') %}
+{% set dmxActive = dmxActive is null ? true : dmxActive %}
+
+{% if dmxActive %}
+    {# ---------- Konfiguration ---------- #}
+    {% set dmxTitleSuffix = (config('Dmx4allMetaTool.config.titleSuffix')|default(''))|trim %}
+    {% set dmxTitleSuffixOnHome = config('Dmx4allMetaTool.config.titleSuffixOnHome')|default(false) %}
+    {% set dmxDefaultDescription = (config('Dmx4allMetaTool.config.defaultDescription')|default(''))|striptags|trim %}
+    {% set dmxDefaultRobots = config('Dmx4allMetaTool.config.defaultRobots')|default('default') %}
+    {% set dmxRobotsSearch = config('Dmx4allMetaTool.config.robotsSearch') %}
+{% set dmxRobotsSearch = dmxRobotsSearch is null ? true : dmxRobotsSearch %}
+    {% set dmxRobotsListingParams = config('Dmx4allMetaTool.config.robotsListingParams') %}
+{% set dmxRobotsListingParams = dmxRobotsListingParams is null ? true : dmxRobotsListingParams %}
+    {% set dmxRobotsPagination = config('Dmx4allMetaTool.config.robotsPagination')|default(false) %}
+    {% set dmxCopyrightYear = (config('Dmx4allMetaTool.config.copyrightYear')|default(''))|striptags|trim %}
+    {% set dmxCopyrightYearCurrent = config('Dmx4allMetaTool.config.copyrightYearCurrent')|default(false) %}
+    {% set dmxRevisit = (config('Dmx4allMetaTool.config.revisitAfter')|default(''))|striptags|trim %}
+    {# Icons: Bildauswahl liefert eine Medien-ID; frühere Versionen speicherten eine URL – beides wird akzeptiert #}
+    {% set dmxIcon192 = (config('Dmx4allMetaTool.config.icon192')|default(''))|trim %}
+    {% set dmxIcon512 = (config('Dmx4allMetaTool.config.icon512')|default(''))|trim %}
+    {% if dmxIcon192 matches '/^[0-9a-f]{32}$/i' %}
+        {% set dmxIconMedia = searchMedia([dmxIcon192], context.context).first %}
+        {% set dmxIcon192 = dmxIconMedia ? dmxIconMedia.url : '' %}
+    {% endif %}
+    {% if dmxIcon512 matches '/^[0-9a-f]{32}$/i' %}
+        {% set dmxIconMedia = searchMedia([dmxIcon512], context.context).first %}
+        {% set dmxIcon512 = dmxIconMedia ? dmxIconMedia.url : '' %}
+    {% endif %}
+    {% if dmxIcon192 != '' and not (dmxIcon192 starts with '/') and not (dmxIcon192 starts with 'http://') and not (dmxIcon192 starts with 'https://') %}
+        {% set dmxIcon192 = '' %}
+    {% endif %}
+    {% if dmxIcon512 != '' and not (dmxIcon512 starts with '/') and not (dmxIcon512 starts with 'http://') and not (dmxIcon512 starts with 'https://') %}
+        {% set dmxIcon512 = '' %}
+    {% endif %}
+    {% if dmxCopyrightYear == '' and dmxCopyrightYearCurrent %}
+        {% set dmxCopyrightYear = 'now'|date('Y') %}
+    {% endif %}
+
+    {# ---------- Aktuelle Seite bestimmen ---------- #}
+    {% set dmxEntity = null %}
+    {% set dmxEntityType = '' %}
+
+    {% if page.product is defined and page.product %}
+        {% set dmxEntity = page.product %}
+        {% set dmxEntityType = 'product' %}
+    {% elseif page.landingPage is defined and page.landingPage %}
+        {% set dmxEntity = page.landingPage %}
+        {% set dmxEntityType = 'landing_page' %}
+    {% elseif page.category is defined and page.category %}
+        {% set dmxEntity = page.category %}
+        {% set dmxEntityType = 'category' %}
+    {% endif %}
+
+    {% set dmxRoute = activeRoute is defined ? activeRoute : '' %}
+    {% set dmxCf = dmxEntity ? (dmxEntity.translated.customFields ?? {}) : {} %}
+    {% set dmxIsHome = dmxEntityType == 'category' and (dmxEntity.id ?? '') == (context.salesChannel.navigationCategoryId ?? '-') %}
+
+    {# ---------- Titel ---------- #}
+    {% set dmxTitle = (page.metaInformation.metaTitle ?? '')|striptags|trim %}
+    {% set dmxNoSuffix = dmxCf.dmx4all_meta_tool_no_title_suffix ?? false %}
+
+    {% if dmxTitle != ''
+        and dmxTitleSuffix != ''
+        and not dmxNoSuffix
+        and (not dmxIsHome or dmxTitleSuffixOnHome)
+        and not (dmxTitle ends with dmxTitleSuffix) %}
+        {% set dmxTitle = dmxTitle ~ ' ' ~ dmxTitleSuffix %}
+    {% endif %}
+
+    {# ---------- Beschreibung ---------- #}
+    {% set dmxDescription = (page.metaInformation.metaDescription ?? '')|striptags|trim %}
+    {% if dmxDescription == '' and dmxDefaultDescription != '' %}
+        {% set dmxDescription = dmxDefaultDescription|u.truncate(255, '…') %}
+    {% endif %}
+
+    {# ---------- Robots ---------- #}
+    {% set dmxRobots = '' %}
+    {% set dmxRobotsCf = dmxCf.dmx4all_meta_tool_robots ?? 'default' %}
+    {% set dmxHasListingParams = app.request.query.all|keys|filter(k => k in ['order', 'properties', 'manufacturer', 'min-price', 'max-price', 'rating', 'shipping-free', 'limit'])|length > 0 %}
+    {% set dmxIsPaginated = (app.request.query.get('p') ?? 1) > 1 %}
+
+    {% if dmxRoute == 'frontend.search.page' and dmxRobotsSearch %}
+        {% set dmxRobots = 'noindex,follow' %}
+    {% elseif dmxEntity %}
+        {% if dmxRobotsCf != 'default' and dmxRobotsCf != '' %}
+            {% set dmxRobots = dmxRobotsCf %}
+        {% elseif dmxEntityType == 'category' and dmxRobotsListingParams and dmxHasListingParams %}
+            {% set dmxRobots = 'noindex,follow' %}
+        {% elseif dmxEntityType == 'category' and dmxRobotsPagination and dmxIsPaginated %}
+            {% set dmxRobots = 'noindex,follow' %}
+        {% elseif dmxDefaultRobots != 'default' and dmxDefaultRobots != '' %}
+            {% set dmxRobots = dmxDefaultRobots %}
+        {% endif %}
+    {% endif %}
+
+    {# ---------- Canonical ---------- #}
+    {% set dmxCanonical = (dmxCf.dmx4all_meta_tool_canonical ?? '')|trim %}
+    {% if dmxCanonical starts with '/' %}
+        {% set dmxCanonical = app.request.schemeAndHttpHost ~ dmxCanonical %}
+    {% elseif dmxCanonical != '' and not (dmxCanonical starts with 'http://') and not (dmxCanonical starts with 'https://') %}
+        {% set dmxCanonical = '' %}
+    {% endif %}
+
+    {# ---------- Open Graph / Twitter ---------- #}
+    {% set dmxOgTitle = (dmxCf.dmx4all_meta_tool_og_title ?? '')|striptags|trim %}
+    {% set dmxOgDescription = (dmxCf.dmx4all_meta_tool_og_description ?? '')|striptags|trim|u.truncate(255, '…') %}
+    {% if dmxOgDescription == '' %}
+        {% set dmxOgDescription = dmxDescription %}
+    {% endif %}
+
+    {% set dmxOgImage = (dmxCf.dmx4all_meta_tool_og_image ?? '')|trim %}
+    {% if dmxOgImage starts with '/' %}
+        {% set dmxOgImage = app.request.schemeAndHttpHost ~ dmxOgImage %}
+    {% elseif dmxOgImage != '' and not (dmxOgImage starts with 'http://') and not (dmxOgImage starts with 'https://') %}
+        {% set dmxOgImage = '' %}
+    {% endif %}
+{% endif %}
+
+{% block layout_head_title_inner %}
+    {%- if dmxActive and dmxTitle != '' -%}
+        {{- dmxTitle -}}
+    {%- else -%}
+        {{- parent() -}}
+    {%- endif -%}
+{% endblock %}
+
+{% block layout_head_meta_tags_description %}{% if dmxActive and dmxDescription != '' %}{{ dmxDescription }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block layout_head_meta_tags_robots %}{% if dmxActive and dmxRobots != '' %}{{ dmxRobots }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block layout_head_canonical %}
+    {% if dmxActive and dmxCanonical != '' %}
+        <link rel="canonical" href="{{ dmxCanonical }}">
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block layout_head_meta_tags_url_og %}{% if dmxActive and dmxCanonical != '' %}{{ dmxCanonical }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block layout_head_meta_tags_title_og %}{% if dmxActive and dmxOgTitle != '' %}{{ dmxOgTitle }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block layout_head_meta_tags_description_og %}{% if dmxActive and dmxOgDescription != '' %}{{ dmxOgDescription }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block layout_head_meta_tags_image_og %}{% if dmxActive and dmxOgImage != '' %}{{ dmxOgImage }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block layout_head_meta_tags_title_twitter %}{% if dmxActive and dmxOgTitle != '' %}{{ dmxOgTitle }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block layout_head_meta_tags_description_twitter %}{% if dmxActive and dmxOgDescription != '' %}{{ dmxOgDescription }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block layout_head_meta_tags_image_twitter %}{% if dmxActive and dmxOgImage != '' %}{{ dmxOgImage }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{#
+    copyrightYear: In 6.7 gibt Shopware das Microdata-Meta (itemprop="copyrightYear") aus – hier wird nur der Wert ersetzt.
+    Ist JSON_LD_DATA aktiv (Microdata entfällt), gibt die App das Meta-Tag selbst aus, damit der Wert nicht verloren geht.
+#}
+{% block layout_head_meta_tags_copyright_year %}{% if dmxActive and dmxCopyrightYear != '' %}{{ dmxCopyrightYear }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{% block layout_head_meta_tags_schema_webpage %}
+    {% if dmxActive and dmxCopyrightYear != '' and feature('JSON_LD_DATA') %}
+        <meta itemprop="copyrightYear" content="{{ dmxCopyrightYear }}">
+    {% endif %}
+    {{ parent() }}
+{% endblock %}
+
+{# revisit-after: Shopware gibt das Tag bereits aus, hier wird nur der Wert ersetzt #}
+{% block layout_head_meta_tags_general_revisit %}{% if dmxActive and dmxRevisit != '' %}{{ dmxRevisit }}{% else %}{{ parent() }}{% endif %}{% endblock %}
+
+{# Zusätzliche Icons (PNG) neben dem normalen Favicon #}
+{% block layout_head_favicon %}
+    {{ parent() }}
+    {% if dmxActive and dmxIcon192 != '' %}
+        <link rel="icon" href="{{ dmxIcon192 }}" sizes="192x192" type="image/png">
+    {% endif %}
+    {% if dmxActive and dmxIcon512 != '' %}
+        <link rel="icon" href="{{ dmxIcon512 }}" sizes="512x512" type="image/png">
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>General</title>
+        <title lang="de-DE">Allgemein</title>
+
+        <input-field type="bool" cache-relevant="true">
+            <name>active</name>
+            <label>Active</label>
+            <label lang="de-DE">Aktiv</label>
+            <defaultValue>true</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Title and description</title>
+        <title lang="de-DE">Titel und Beschreibung</title>
+
+        <input-field type="text" cache-relevant="true">
+            <name>titleSuffix</name>
+            <label>Title suffix</label>
+            <label lang="de-DE">Titel-Suffix</label>
+            <placeholder>| DMX4ALL</placeholder>
+            <placeholder lang="de-DE">| DMX4ALL</placeholder>
+            <helpText>Appended to the meta title, separated by a space (e.g. "| DMX4ALL"). Not appended if the title already ends with it.</helpText>
+            <helpText lang="de-DE">Wird mit einem Leerzeichen an den Meta-Titel angehängt (z. B. "| DMX4ALL"). Wird nicht doppelt angehängt, wenn der Titel bereits damit endet.</helpText>
+        </input-field>
+
+        <input-field type="bool" cache-relevant="true">
+            <name>titleSuffixOnHome</name>
+            <label>Title suffix on home page</label>
+            <label lang="de-DE">Titel-Suffix auch auf der Startseite</label>
+            <defaultValue>false</defaultValue>
+        </input-field>
+
+        <input-field type="textarea" cache-relevant="true">
+            <name>defaultDescription</name>
+            <label>Fallback meta description</label>
+            <label lang="de-DE">Fallback-Meta-Beschreibung</label>
+            <helpText>Used on every page that has no meta description of its own.</helpText>
+            <helpText lang="de-DE">Wird auf allen Seiten ausgegeben, die keine eigene Meta-Beschreibung haben.</helpText>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Robots</title>
+        <title lang="de-DE">Robots</title>
+
+        <input-field type="single-select" cache-relevant="true">
+            <name>defaultRobots</name>
+            <label>Default robots for products, categories and landing pages</label>
+            <label lang="de-DE">Standard-Robots für Produkte, Kategorien und Landingpages</label>
+            <options>
+                <option>
+                    <id>default</id>
+                    <name>Shopware default</name>
+                    <name lang="de-DE">Shopware-Standard</name>
+                </option>
+                <option>
+                    <id>index,follow</id>
+                    <name>index, follow</name>
+                </option>
+                <option>
+                    <id>noindex,follow</id>
+                    <name>noindex, follow</name>
+                </option>
+                <option>
+                    <id>index,nofollow</id>
+                    <name>index, nofollow</name>
+                </option>
+                <option>
+                    <id>noindex,nofollow</id>
+                    <name>noindex, nofollow</name>
+                </option>
+            </options>
+            <defaultValue>default</defaultValue>
+            <helpText>A robots value set on the individual page always wins.</helpText>
+            <helpText lang="de-DE">Ein an der einzelnen Seite gesetzter Robots-Wert hat immer Vorrang.</helpText>
+        </input-field>
+
+        <input-field type="bool" cache-relevant="true">
+            <name>robotsSearch</name>
+            <label>Search results: noindex, follow</label>
+            <label lang="de-DE">Suchergebnisse: noindex, follow</label>
+            <defaultValue>true</defaultValue>
+        </input-field>
+
+        <input-field type="bool" cache-relevant="true">
+            <name>robotsListingParams</name>
+            <label>Filtered or sorted listings: noindex, follow</label>
+            <label lang="de-DE">Gefilterte oder sortierte Listen: noindex, follow</label>
+            <defaultValue>true</defaultValue>
+            <helpText>Applies to category pages opened with filter, sorting or limit parameters.</helpText>
+            <helpText lang="de-DE">Gilt für Kategorieseiten, die mit Filter-, Sortier- oder Limit-Parametern aufgerufen werden.</helpText>
+        </input-field>
+
+        <input-field type="bool" cache-relevant="true">
+            <name>robotsPagination</name>
+            <label>Listing page 2 and higher: noindex, follow</label>
+            <label lang="de-DE">Listenseite 2 und höher: noindex, follow</label>
+            <defaultValue>false</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Copyright</title>
+        <title lang="de-DE">Copyright</title>
+
+        <input-field type="text" cache-relevant="true">
+            <name>copyrightYear</name>
+            <label>copyrightYear (meta tag)</label>
+            <label lang="de-DE">copyrightYear (Meta-Tag)</label>
+            <placeholder>2026</placeholder>
+            <placeholder lang="de-DE">2026</placeholder>
+            <helpText>Value of the copyrightYear meta tag, e.g. "2026" or "2019-2026". Empty = Shopware default.</helpText>
+            <helpText lang="de-DE">Wert des Meta-Tags copyrightYear, z. B. "2026" oder "2019-2026". Leer = Shopware-Standard.</helpText>
+        </input-field>
+
+        <input-field type="bool" cache-relevant="true">
+            <name>copyrightYearCurrent</name>
+            <label>Use current year if the field is empty</label>
+            <label lang="de-DE">Aktuelles Jahr verwenden, wenn das Feld leer ist</label>
+            <defaultValue>false</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Head extras</title>
+        <title lang="de-DE">Zusätze im Head</title>
+
+        <input-field type="text" cache-relevant="true">
+            <name>revisitAfter</name>
+            <label>revisit-after</label>
+            <label lang="de-DE">revisit-after</label>
+            <placeholder>7 days</placeholder>
+            <placeholder lang="de-DE">7 days</placeholder>
+            <helpText>Value of the revisit-after meta tag. Empty = Shopware default.</helpText>
+            <helpText lang="de-DE">Wert des Meta-Tags revisit-after. Leer = Shopware-Standard.</helpText>
+        </input-field>
+
+        <component name="sw-media-field" cache-relevant="true">
+            <name>icon192</name>
+            <label>Android Chrome icon 192x192 (PNG)</label>
+            <label lang="de-DE">Android-Chrome-Icon 192x192 (PNG)</label>
+            <helpText>Choose an image from the media library. Empty = no icon output.</helpText>
+            <helpText lang="de-DE">Bild aus der Medienverwaltung auswählen. Leer = keine Icon-Ausgabe.</helpText>
+        </component>
+
+        <component name="sw-media-field" cache-relevant="true">
+            <name>icon512</name>
+            <label>Android Chrome icon 512x512 (PNG)</label>
+            <label lang="de-DE">Android-Chrome-Icon 512x512 (PNG)</label>
+            <helpText>Choose an image from the media library. Empty = no icon output.</helpText>
+            <helpText lang="de-DE">Bild aus der Medienverwaltung auswählen. Leer = keine Icon-Ausgabe.</helpText>
+        </component>
+    </card>
+</config>
