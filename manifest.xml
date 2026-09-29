@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/Framework/App/Manifest/Schema/manifest-2.0.xsd">
+    <meta>
+        <name>Dmx4allMetaTool</name>
+        <label>DMX4ALL Meta tool</label>
+        <label lang="de-DE">DMX4ALL Meta tool</label>
+        <description>Central SEO meta settings: title suffix, default description, robots, copyrightYear, revisit-after and Android Chrome icons globally; robots, canonical and Open Graph fields per product, category and landing page.</description>
+        <description lang="de-DE">Zentrale SEO-Meta-Angaben: Titel-Suffix, Standard-Beschreibung, Robots, copyrightYear, revisit-after und Android-Chrome-Icons global; Robots, Canonical und Open-Graph-Felder pro Produkt, Kategorie und Landingpage.</description>
+        <author>Danny Hombeck</author>
+        <copyright>(c) DMX4ALL GmbH</copyright>
+        <version>1.0.8</version>
+        <icon>Resources/config/plugin.png</icon>
+        <license>proprietary</license>
+        <compatibility>&gt;=6.7.0 &lt;6.9.0</compatibility>
+    </meta>
+
+    <custom-fields>
+        <custom-field-set>
+            <name>dmx4all_meta_tool</name>
+            <label>DMX4ALL Meta tool (SEO)</label>
+            <label lang="de-DE">DMX4ALL Meta tool (SEO)</label>
+            <related-entities>
+                <product/>
+                <category/>
+                <landing_page/>
+            </related-entities>
+            <fields>
+                <single-select name="dmx4all_meta_tool_robots">
+                    <label>Robots</label>
+                    <label lang="de-DE">Robots</label>
+                    <help-text>Overrides the global robots setting for this page.</help-text>
+                    <help-text lang="de-DE">Überschreibt die globale Robots-Einstellung für diese Seite.</help-text>
+                    <position>1</position>
+                    <options>
+                        <option value="default">
+                            <name>Default (global setting)</name>
+                            <name lang="de-DE">Standard (globale Einstellung)</name>
+                        </option>
+                        <option value="index,follow">
+                            <name>index, follow</name>
+                            <name lang="de-DE">index, follow</name>
+                        </option>
+                        <option value="noindex,follow">
+                            <name>noindex, follow</name>
+                            <name lang="de-DE">noindex, follow</name>
+                        </option>
+                        <option value="index,nofollow">
+                            <name>index, nofollow</name>
+                            <name lang="de-DE">index, nofollow</name>
+                        </option>
+                        <option value="noindex,nofollow">
+                            <name>noindex, nofollow</name>
+                            <name lang="de-DE">noindex, nofollow</name>
+                        </option>
+                    </options>
+                </single-select>
+                <text name="dmx4all_meta_tool_canonical">
+                    <label>Canonical URL</label>
+                    <label lang="de-DE">Canonical-URL</label>
+                    <help-text>Full URL (https://...) or path starting with "/". Empty = Shopware default.</help-text>
+                    <help-text lang="de-DE">Vollständige URL (https://...) oder Pfad mit führendem "/". Leer = Shopware-Standard.</help-text>
+                    <position>2</position>
+                </text>
+                <bool name="dmx4all_meta_tool_no_title_suffix">
+                    <label>No title suffix</label>
+                    <label lang="de-DE">Ohne Titel-Suffix</label>
+                    <help-text>Do not append the global title suffix on this page.</help-text>
+                    <help-text lang="de-DE">Den globalen Titel-Suffix auf dieser Seite nicht anhängen.</help-text>
+                    <position>3</position>
+                </bool>
+                <text name="dmx4all_meta_tool_og_title">
+                    <label>Open Graph title</label>
+                    <label lang="de-DE">Open-Graph-Titel</label>
+                    <help-text>Used for og:title and twitter:title. Empty = meta title.</help-text>
+                    <help-text lang="de-DE">Für og:title und twitter:title. Leer = Meta-Titel.</help-text>
+                    <position>4</position>
+                </text>
+                <text-area name="dmx4all_meta_tool_og_description">
+                    <label>Open Graph description</label>
+                    <label lang="de-DE">Open-Graph-Beschreibung</label>
+                    <help-text>Used for og:description and twitter:description. Empty = meta description.</help-text>
+                    <help-text lang="de-DE">Für og:description und twitter:description. Leer = Meta-Beschreibung.</help-text>
+                    <position>5</position>
+                </text-area>
+                <text name="dmx4all_meta_tool_og_image">
+                    <label>Open Graph image URL</label>
+                    <label lang="de-DE">Open-Graph-Bild (URL)</label>
+                    <help-text>Full URL (https://...) or path starting with "/". Empty = product/category image or global default image.</help-text>
+                    <help-text lang="de-DE">Vollständige URL (https://...) oder Pfad mit führendem "/". Leer = Produkt-/Kategoriebild oder globales Standardbild.</help-text>
+                    <position>6</position>
+                </text>
+            </fields>
+        </custom-field-set>
+    </custom-fields>
+</manifest>
